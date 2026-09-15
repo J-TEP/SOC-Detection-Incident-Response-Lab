@@ -1,0 +1,79 @@
+INCIDENT REPORT 03
+Privileged Group Modification
+
+SYSTEM
+Endpoint: SOC-ENDPOINT-01
+Operating System: Windows 11
+Monitoring: Windows Security Event Logs / Wazuh SIEM
+
+INCIDENT SUMMARY
+A temporary local account named labtest was created and added to the
+local Administrators group to simulate a potentially unauthorized
+privilege modification.
+
+DETECTION
+Windows Event ID 4720:
+A user account was created.
+
+Windows Event ID 4732:
+A member was added to a security-enabled local group.
+
+Target Group: Administrators
+Group SID: S-1-5-32-544
+
+INVESTIGATION
+Windows Security telemetry was reviewed to determine which account
+performed the modification and which account received administrative
+privileges.
+
+Event 4720 established the SID associated with the newly created
+labtest account.
+
+Event 4732 recorded the same member SID being added to the local
+Administrators group.
+
+Subject Account:
+socanalyst
+
+Endpoint:
+SOC-ENDPOINT-01
+
+The matching SID allowed the account-creation and privilege-modification
+events to be correlated.
+
+SIEM OBSERVATION
+Wazuh demonstrated ingestion of account-management telemetry during
+testing. However, the specific Event 4732 corresponding to the
+Administrators group modification was not surfaced in the
+wazuh-alerts-* index during the investigation.
+
+The event is therefore documented using the confirmed Windows Security
+audit evidence rather than being represented as a successful Wazuh
+alert.
+
+ANALYST ASSESSMENT
+True Positive - Benign Security Simulation
+
+The privileged-group modification occurred as expected and represented
+activity that would warrant investigation in a production environment.
+
+RESPONSE / REMEDIATION
+After evidence collection was completed:
+
+- labtest was removed from the local Administrators group.
+- The temporary labtest account was deleted.
+
+Both remediation actions completed successfully.
+
+In a production environment, additional actions could include:
+
+- Determining whether the account creation was authorized
+- Reviewing activity performed by the newly privileged account
+- Investigating the administrator responsible for the modification
+- Revoking unauthorized privileges
+- Disabling or removing unauthorized accounts
+- Searching for additional account or group modifications
+- Escalating evidence of unauthorized privilege escalation
+
+EVIDENCE
+Incident-03-Administrator-Group-Modification.png

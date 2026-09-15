@@ -1,0 +1,107 @@
+INCIDENT REPORT 04
+Network Traffic Investigation and Endpoint Correlation
+
+SYSTEM
+Endpoint: SOC-ENDPOINT-01
+Operating System: Windows 11
+Monitoring: Sysmon / Wireshark / Wazuh SIEM
+
+INCIDENT SUMMARY
+Controlled outbound HTTP traffic was generated from SOC-ENDPOINT-01
+and captured using Wireshark.
+
+The packet-level network activity was then correlated with Sysmon
+Event ID 3 endpoint telemetry to demonstrate investigation across
+multiple data sources.
+
+NETWORK EVIDENCE
+Protocol: TCP / HTTP
+Destination Port: 80
+HTTP Method: GET
+
+Wireshark observed:
+
+GET / HTTP/1.1
+
+Source IPv6:
+fd17:625c:f037:2:b45d:cc53:3bcc:a452
+
+Source Port:
+58160
+
+Destination IPv6:
+2606:4700:10::6814:179a
+
+Destination Port:
+80
+
+ENDPOINT EVIDENCE
+Sysmon Event ID:
+3 - Network Connection
+
+Sysmon recorded:
+
+Protocol:
+tcp
+
+Initiated:
+true
+
+Source IPv6:
+fd17:625c:f037:2:b45d:cc53:3bcc:a452
+
+Source Port:
+58160
+
+Destination IPv6:
+2606:4700:10:0:0:0:6814:179a
+
+Destination Port:
+80
+
+Destination Port Name:
+http
+
+CORRELATION
+The Wireshark packet capture and Sysmon event contained matching:
+
+- Source IPv6 address
+- Source TCP port 58160
+- Destination IPv6 address
+- Destination TCP port 80
+- TCP protocol
+
+Wireshark represented the destination IPv6 address using compressed
+notation while Sysmon displayed the equivalent expanded notation.
+
+This allowed the same outbound connection to be correlated between
+packet-level network telemetry and endpoint telemetry.
+
+PROCESS ATTRIBUTION
+The corresponding Sysmon Event ID 3 displayed:
+
+Image: <unknown process>
+
+Therefore, the investigation does not claim that Sysmon successfully
+attributed this specific network event to curl.exe.
+
+SIEM OBSERVATION
+The corresponding Sysmon Event ID 3 was not surfaced in the
+wazuh-alerts-* index during the investigation.
+
+The incident is therefore documented using the confirmed Sysmon and
+Wireshark evidence without representing the activity as a successful
+Wazuh alert.
+
+ANALYST ASSESSMENT
+True Positive - Benign Security Simulation
+
+The network connection was intentionally generated as controlled lab
+activity.
+
+The investigation successfully demonstrated correlation between
+endpoint and network telemetry using connection attributes.
+
+EVIDENCE
+Incident-04-Wireshark-HTTP-Traffic.png
+Incident-04-Sysmon-Network-Correlation.png
