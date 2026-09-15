@@ -1,0 +1,200 @@
+SOC ANALYST DETECTION & INCIDENT RESPONSE HOME LAB
+==================================================
+
+PROJECT OBJECTIVE
+Build a Windows endpoint security monitoring environment to practice
+SOC analyst workflows including log analysis, SIEM investigation,
+endpoint telemetry analysis, network traffic analysis, detection,
+incident triage, and incident response documentation.
+
+
+LAB ARCHITECTURE
+----------------
+Endpoint:
+SOC-ENDPOINT-01
+Windows 11
+
+Endpoint Security / Monitoring:
+- Sysmon
+- Windows Security Event Logs
+- Wazuh Agent
+
+SIEM:
+- Wazuh Manager
+- Wazuh Indexer
+- Wazuh Dashboard
+- Docker Desktop / WSL2 Ubuntu
+
+Network Analysis:
+- Wireshark
+- Npcap
+
+Virtualization:
+- Oracle VirtualBox
+- Endpoint networking configured through VirtualBox NAT
+
+
+TELEMETRY CONFIGURATION
+-----------------------
+Sysmon was installed and configured on SOC-ENDPOINT-01.
+
+Sysmon Operational logs were configured for collection by the Wazuh
+agent using:
+
+Microsoft-Windows-Sysmon/Operational
+
+Confirmed Sysmon telemetry ingestion into Wazuh.
+
+Windows Security auditing was also used during authentication and
+account-management investigations.
+
+
+INCIDENT 01 - REPEATED FAILED AUTHENTICATION
+---------------------------------------------
+Generated repeated failed interactive login attempts against the
+socanalyst account.
+
+Windows Event:
+4625 - Failed Logon
+
+Wazuh Detection:
+Rule ID 60122
+Level 5
+Logon Failure - Unknown user or bad password
+
+Five authentication failures were generated within approximately
+10 seconds.
+
+Investigation included:
+- Target account
+- Logon type
+- Logon process
+- Authentication status/substatus
+- Endpoint identification
+- Repeated-event analysis
+
+MITRE ATT&CK Context:
+T1110 - Brute Force
+
+
+INCIDENT 02 - SUSPICIOUS POWERSHELL
+------------------------------------
+Generated controlled suspicious PowerShell execution using:
+
+-NoProfile
+-ExecutionPolicy Bypass
+
+The command performed process enumeration and wrote the output to
+a temporary file.
+
+Sysmon:
+Event ID 1 - Process Creation
+
+Wazuh:
+Rule ID 92027
+Level 4
+
+MITRE ATT&CK:
+T1059.001 - PowerShell
+
+Investigation included:
+- Command-line arguments
+- Process image
+- User context
+- Integrity level
+- SHA-256 hash
+- Parent/child process relationships
+
+
+INCIDENT 03 - PRIVILEGED GROUP MODIFICATION
+--------------------------------------------
+Created temporary lab account:
+
+labtest
+
+Windows Security Event:
+4720 - User Account Created
+
+The account was then added to the local Administrators group.
+
+Windows Security Event:
+4732 - Member Added to Security-Enabled Local Group
+
+Investigation correlated the SID assigned to labtest during account
+creation with the SID recorded when the account was added to the
+Administrators group.
+
+Wazuh demonstrated ingestion of account-management telemetry, but the
+specific Administrators-group Event 4732 was not surfaced in the
+wazuh-alerts-* index during the investigation.
+
+Response:
+- Removed labtest from Administrators
+- Deleted temporary labtest account
+
+
+INCIDENT 04 - NETWORK TRAFFIC INVESTIGATION
+--------------------------------------------
+Generated controlled outbound HTTP traffic from SOC-ENDPOINT-01.
+
+Wireshark captured:
+- HTTP GET request
+- Source IPv6 address
+- Source TCP port
+- Destination IPv6 address
+- Destination TCP port 80
+
+Sysmon Event ID:
+3 - Network Connection
+
+Wireshark and Sysmon telemetry were correlated using:
+- Source IP
+- Source port 58160
+- Destination IP
+- Destination port 80
+- TCP protocol
+
+The destination IPv6 address appeared in compressed notation in
+Wireshark and expanded notation in Sysmon.
+
+Wazuh did not surface the corresponding Sysmon Event ID 3 in
+wazuh-alerts-* during the investigation.
+
+
+DETECTION ENGINEERING NOTES
+---------------------------
+Built-in Wazuh detections successfully validated:
+
+60122 - Windows failed authentication
+92027 - PowerShell process detection
+
+A custom correlation rule was tested to detect five authentication
+failures within 60 seconds.
+
+The custom correlation rule validated syntactically but did not
+successfully generate the expected correlated alert.
+
+The custom rule is therefore documented as detection-engineering
+testing and is NOT presented as a successful production detection.
+
+
+SOC SKILLS PRACTICED
+--------------------
+- Windows Event Log analysis
+- Sysmon telemetry analysis
+- Wazuh SIEM investigation
+- DQL searching/filtering
+- Authentication event investigation
+- Process creation analysis
+- PowerShell investigation
+- SHA-256 hash analysis
+- Parent/child process analysis
+- Account and privilege modification analysis
+- SID correlation
+- Wireshark packet analysis
+- Endpoint/network telemetry correlation
+- MITRE ATT&CK mapping
+- Incident triage
+- Incident response
+- Evidence collection
+- Security incident documentation

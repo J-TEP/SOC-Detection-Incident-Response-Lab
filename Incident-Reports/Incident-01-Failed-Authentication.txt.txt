@@ -1,0 +1,68 @@
+INCIDENT REPORT 01
+Repeated Failed Authentication Attempts
+
+SYSTEM
+Endpoint: SOC-ENDPOINT-01
+Operating System: Windows 11
+Monitoring: Windows Security Logs / Wazuh SIEM
+
+INCIDENT SUMMARY
+Multiple failed interactive authentication attempts were generated against the
+socanalyst account to simulate suspicious repeated login activity. Windows
+Security auditing recorded the attempts and Wazuh SIEM detected the
+authentication failures.
+
+DETECTION
+Windows Event ID: 4625
+Wazuh Rule ID: 60122
+Wazuh Rule Level: 5
+Wazuh Description: Logon Failure - Unknown user or bad password
+
+Five failed authentication attempts were observed within approximately
+10 seconds.
+
+INVESTIGATION
+The Windows authentication events were reviewed and correlated in Wazuh.
+
+Target Account: socanalyst
+Endpoint: SOC-ENDPOINT-01
+Logon Type: 2 (Interactive)
+Logon Process: seclogo
+Process: C:\Windows\System32\svchost.exe
+Status: 0xC000006D
+SubStatus: 0xC000006A
+
+The status information was consistent with an authentication failure caused
+by invalid credentials.
+
+MITRE ATT&CK CONTEXT
+Technique: T1110 - Brute Force
+
+Repeated authentication failures can be an indicator of password guessing
+or brute-force activity. In this controlled lab, the attempts were
+intentionally generated for detection and investigation purposes.
+
+ANALYST ASSESSMENT
+True Positive - Benign Security Simulation
+
+The authentication failures were successfully detected and investigated.
+The rapid sequence of failed logins demonstrated how Windows authentication
+telemetry can be used by a SOC analyst to identify potentially suspicious
+login behavior.
+
+RESPONSE / REMEDIATION
+The activity was verified as authorized lab testing. No account compromise
+occurred and no containment action was required.
+
+In a production environment, additional response actions could include:
+- Reviewing the originating host/IP and authentication history
+- Determining whether other accounts were targeted
+- Temporarily restricting the source of malicious authentication attempts
+- Resetting credentials if account compromise is suspected
+- Escalating repeated authentication attempts for further investigation
+
+EVIDENCE
+Incident-01-Failed-Login-Detection.png
+Incident-01-Failed-Login-Investigation.png
+Incident-01-Repeated-Failed-Logins.png
+Incident-01-Wazuh-Failed-Login-Rule-60122.png

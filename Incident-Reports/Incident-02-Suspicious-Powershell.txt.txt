@@ -1,0 +1,72 @@
+INCIDENT REPORT 02
+Suspicious PowerShell Execution
+
+SYSTEM
+Endpoint: SOC-ENDPOINT-01
+Operating System: Windows 11
+Monitoring: Sysmon / Wazuh SIEM
+
+INCIDENT SUMMARY
+Suspicious PowerShell activity was intentionally generated to simulate
+command-line behavior that could warrant investigation by a SOC analyst.
+
+PowerShell was executed using the -NoProfile and -ExecutionPolicy Bypass
+arguments. The command enumerated running processes and wrote the results
+to a temporary file.
+
+DETECTION
+Sysmon Event ID: 1 - Process Creation
+Wazuh Rule ID: 92027
+Wazuh Rule Level: 4
+Wazuh Description: Powershell process spawned powershell instance
+
+MITRE ATT&CK:
+T1059.001 - Command and Scripting Interpreter: PowerShell
+
+COMMAND OBSERVED
+powershell.exe -NoProfile -ExecutionPolicy Bypass -Command
+"Get-Process | Select-Object -First 10 | Out-File
+$env:TEMP\process_discovery.txt"
+
+INVESTIGATION
+Image:
+C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe
+
+User:
+SOC-ENDPOINT-01\socanalyst
+
+Integrity Level:
+High
+
+SHA-256:
+0FF6F2C94BC7E2833A5F7E16DE1622E5DBA70396F31C7D5F56381870317E8C46
+
+The investigation included review of process creation telemetry,
+command-line arguments, execution context, cryptographic hash information,
+and parent/child process relationships.
+
+ANALYST ASSESSMENT
+True Positive - Benign Security Simulation
+
+The PowerShell execution was successfully captured by Sysmon and detected
+by Wazuh. The combination of ExecutionPolicy Bypass and process discovery
+represented behavior appropriate for SOC investigation.
+
+The activity was intentionally generated as part of the security lab and
+was not malicious.
+
+RESPONSE / REMEDIATION
+The command was verified as authorized lab activity.
+
+In a production environment, an analyst could:
+- Determine the originating user and parent process
+- Review the complete PowerShell command line
+- Investigate related process activity
+- Validate the executable hash
+- Search for additional activity from the endpoint
+- Isolate the endpoint if malicious execution is confirmed
+
+EVIDENCE
+Incident-02-Suspicious-PowerShell-Sysmon.png
+Incident-02-Wazuh-PowerShell-Detection.png
+Incident-02-PowerShell-Investigation-Details.png

@@ -1,0 +1,79 @@
+DETECTION VALIDATION NOTES
+==========================
+
+This lab validated built-in Wazuh detection rules and included
+experimentation with custom correlation logic.
+
+VALIDATED DETECTION 01
+----------------------
+Activity:
+Windows failed authentication
+
+Windows Event:
+4625
+
+Wazuh Rule:
+60122
+
+Level:
+5
+
+Description:
+Logon Failure - Unknown user or bad password
+
+Result:
+Successfully detected and investigated in Wazuh.
+
+
+VALIDATED DETECTION 02
+----------------------
+Activity:
+Suspicious PowerShell execution
+
+Sysmon Event:
+1 - Process Creation
+
+Wazuh Rule:
+92027
+
+Level:
+4
+
+Description:
+Powershell process spawned powershell instance
+
+MITRE ATT&CK:
+T1059.001 - PowerShell
+
+Result:
+Successfully detected and investigated in Wazuh.
+
+
+CUSTOM DETECTION ENGINEERING TEST
+---------------------------------
+Objective:
+Generate a higher-severity alert when five Windows authentication
+failures occur within 60 seconds.
+
+Custom Rule ID:
+100100
+
+MITRE ATT&CK Context:
+T1110 - Brute Force
+
+Result:
+The custom rule configuration passed syntax validation but did not
+generate the expected correlated alert during testing.
+
+The custom rule is retained as detection-engineering experimentation
+and is not represented as a successfully deployed detection.
+
+LESSONS LEARNED
+---------------
+Detection engineering requires more than syntactically valid rules.
+Rule inheritance, event matching, correlation behavior, event indexing,
+and the underlying SIEM ruleset must all be validated using actual
+telemetry.
+
+Successful detection logic should be verified using repeatable test
+activity before being treated as production-ready.

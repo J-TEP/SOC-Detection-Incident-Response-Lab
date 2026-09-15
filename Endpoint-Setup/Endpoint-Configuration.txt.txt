@@ -1,0 +1,43 @@
+ENDPOINT CONFIGURATION
+======================
+
+Endpoint Name: SOC-ENDPOINT-01
+Operating System: Windows 11
+Virtualization: Oracle VirtualBox
+Network Mode: NAT
+Endpoint IP: 10.0.2.15
+
+SECURITY MONITORING
+
+Sysmon
+- Installed Microsoft Sysinternals Sysmon
+- Sysmon service: Sysmon64
+- SHA-256 hashing enabled
+- Process creation monitoring enabled
+- Network connection monitoring enabled
+- DNS query monitoring enabled
+- Registry activity monitoring enabled
+- File creation monitoring enabled
+- Process tampering monitoring enabled
+
+Windows Event Logging
+- Windows Security auditing used for authentication events
+- Windows Security auditing used for account and group modifications
+- Sysmon Operational event channel monitored
+
+Wazuh Agent
+- Wazuh Agent v4.14.7
+- Agent ID: 001
+- Agent status verified Active
+- Endpoint telemetry forwarded to Wazuh
+- Sysmon Operational channel added to Wazuh agent configuration
+
+SIEM
+Wazuh Manager / Indexer / Dashboard deployed using Docker Desktop
+and WSL2 Ubuntu.
+
+PURPOSE
+This endpoint was configured as the monitored Windows workstation for
+the SOC Detection & Incident Response Home Lab. Telemetry from Windows
+and Sysmon was used for detection, investigation, and incident-response
+exercises.
