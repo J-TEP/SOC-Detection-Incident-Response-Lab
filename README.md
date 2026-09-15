@@ -371,7 +371,7 @@ This project provided hands-on experience with:
 # Repository Structure
 
 ```text
-SOC-detection-Incident-Response-Lab/
+SOC-Detection-Incident-Response-Lab/
 │
 ├── Architecture/
 │   └── Lab architecture / endpoint evidence
@@ -394,7 +394,7 @@ SOC-detection-Incident-Response-Lab/
 ├── Incident-Reports/
 │   └── SOC analyst incident reports
 │
-├── PROJECT-NOTES.txt
+├── Project-Notes.txt
 │
 └── README.md
 ```
